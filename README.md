@@ -1,2 +1,2 @@
-# thesis-latex
-latex project of my master thesis -
+# mst-thesis 
+latex project of my master thesis - use XeLaTeX as complier.
