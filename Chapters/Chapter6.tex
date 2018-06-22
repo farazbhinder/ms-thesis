@@ -1,0 +1,13 @@
+\chapter{Conclusion and Future Work} \label{the-chapter-6}
+
+\section{Conclusion}
+In this thesis, we have extended the HeidelTime multilingual model to create better baseline automatically developed resources for over 200 languages. First, we extended the model to accomodate the morphologically rich languages, such that the inflections of words in such languages are reflected in their pattern resources. Second, we accomodated the unsegmented languages, such that the rules do not use space as a delimeter between patterns in HeidelTime rules for these langauges. Third, we analysed Wikipedia dumps for all languages and enriched the language independent rules of these languages with frequently occurring temporal patterns as language dependent HeidelTime rules. Finally, we ran evaluations on temporally annotated corpora and Wikipedia dumps and summarized our results. 
+
+\section{Future Work}
+There is still space for improvement in the baseline temporal tagging using automatically developed resources. Some of possible directions are as follows:
+
+\begin{itemize}
+	\item \textbf{Revisiting language independent resources.} We can improve the language independent resources such that they capture more TIME type temporal expressions. For instance, currently there is no language independent rule or pattern to extract temporal expressions representing time, for example, a German sentence ``Er kommt um 7 Uhr nach Hause" has temporal expression ``um 7 Uhr", which is not extracted using automatically developed resources. Similar expressions representing time are not extracted for any language using automatically developed resources. This can further improve baseline temporal performance of HeidelTime for many languages.
+	\item \textbf{Newswire sources as data source to learn language-specific rules.} We can try to analyse newswire documents for different languages to learn language specific rules for respective languages. However, it might be difficult to find newswire documents for so many languages, so perhaps a small number of languages can be selected to learn better rules and compare the performance. The rationale behind this is that newswire documents will have more and other types of temporal expressions, hence leading to better rules.
+	\item \textbf{Using more sophisticated approaches to learn rules.} More sophisticated pattern mining approaches can be used to learn a wide variety of rules and improve quality of learned rules as compared to the comparitively rudimentary approach to learn frequently occurring rules taken by us. 
+\end{itemize}

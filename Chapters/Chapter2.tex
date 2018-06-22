@@ -1,0 +1,324 @@
+\chapter{Basic Concepts and Related Approaches} \label{the-chapter-2}
+\section{Multilingual Natural Language Processing}
+Natural language processing (NLP) aims to get computers to perform useful tasks that involve human language \cite{DBLP:books/lib/JurafskyM09}. The systems that incorporate NLP include machine translation systems, message-understanding systems, text-to-speech synthesis systems, speech recognition systems, multilingual information retrieval, among others; in general, any system that does useful speech or text processing.
+
+Among above mentioned systems that require Multilingual NLP are machine translation systems and multilingual information retrieval systems; in both these systems multilingual natural language processing is required and pose a major challenge. Conferences such as MUC have played a major role in invigorating research in NLP, and also in multilingual NLP. For instance, multilingual named entities recognition evaluation was run using training and test article from comparable domains for all languages in MUC-7 conference \cite{chinchor1998overview}. 
+
+
+
+\section{Temporal Information}
+Documents contain implicit and explicit temporal information that can be utilized; the temporal information in documents can occur in many forms that include temporal expressions in documents, document creation time and document focus time \cite{DBLP:journals/ftir/KanhabuaBN15}. Document creation time (DCT) is one simple kind of temporal information which is almost occurs with all textual documents. Temporal information can also occur in user queries; for instance, in seasonal queries like ``black friday deals" or ``new iphone" \cite{DBLP:conf/sigir/Shokouhi11}. To capture the temporal information occurring in documents, one can use offsets or some custom tags. However, special annotation schemes have also been developed for consistency and interoperability. 
+
+\subsection{Temporal Expressions} \label{sec_temp_ex}
+Temporal expressions, as defined by Schilder and Habel in \cite{DBLP:conf/ndqa/SchilderH03}, refer to chunks of text that represent some sort of direct or inferred temporal information. In general, temporal expressions can be classified into explicit, implict and relative types \cite{DBLP:conf/ndqa/SchilderH03, DBLP:journals/sigir/AlonsoGB07}. 
+\begin{enumerate}[i.]
+	\item Explicit temporal expressions are such that can be easily normalized to exact time point on the Gregorian calendar; for example, `22 December 1997'.
+	\item Implicit temporal expressions are such that need additional comprehension to normalize to exact time point; for example, `Mother's Day 2003'.
+	\item Relative temporal expressions are such that need a reference time relative to which they must be normalized; for example, `last week' needs document creation time or some reference in text to normalize correctly.
+\end{enumerate}
+
+In addition to the above mentioned temporal expression types, Str{\"{o}}tgen and Gertz in \cite{DBLP:series/synthesis/2016Strotgen} define another type, i.e., underspecified temporal expressions. This type is closest to the relative type in the above three types, nevertheless, distinct. The difference is that in underspecified temporal expression we need to find the expression's `relation' to the reference time, in addition to finding the reference time itself, to correctly normalize it. The example we gave above for relative was `last week'; we only need to find the reference time in such case to correctly normalize it as the `last' word defines the relation to the reference time, i.e., the week before. However, to normalize a temporal expression such as `December', we need to find whether this December occurs before or after the reference time, in addition to finding the reference time itself, so `December' is an underspecified temporal expression. This also illustrates the difficulty of normalizing temporal expressions to correct values. 
+
+\subsection{Annotation Schemes} \label{ss2as}
+Temporal information can be extracted and annotated by enclosing temporal expressions in special tags, noting their offset positions in the document or in any desired way. However, it makes sense to have a common annotation standard that aids research. Two current annotation schemes being used by the research community are TIDES TIMEX2 standard by Ferro et al. in \cite{ferro2001tides, ferro2005tides} and TimeML Specification Language by Pustejovsky et al. in \cite{DBLP:journals/lre/PustejovskyKLS05, DBLP:conf/ndqa/PustejovskyCISGSKR03}. Both the standards use XML tags (TIDES uses TIMEX2, TimeML uses TIMEX3) with some properties; one such property is VALUE that represents the normalized value of the respective temporal expression in ISO8601 standard \cite{iso86012000data}. Some standard ISO8601 patterns and sample values are given in the table below (for details see \cite{iso86012000data}):
+
+\begin{table}[H]
+	\centering
+	\rowcolors{1}{}{cream}
+	\begin{threeparttable}
+	\begin{tabular}{||l l l||} 
+		\hline
+		\textbf{Temporal Unit} & \textbf{Pattern} & \textbf{Sample Value} \\ [0.5ex] 
+		\hline\hline
+		complete calendar date & YYYY-MM-DD\tnote{1} & 1999-12-23 \\ 
+		specific month & YYYY-MM & 1978-01 \\
+		specific year & YYYY & 1978 \\
+		specifc century & YY & 21 \\
+		complete week date & YYYY-Www-D\tnote{2} & 2011-W02-7\\
+		specific week & YYYY-Www\tnote{3} & 2011-W02 \\
+		24 hour clock time & HH:MM:SS\tnote{4} & 23:59:59 \\
+		complete date and time & YYYY-MM-DDThh:mm:ss\tnote{5} & 1985-04-22T12:16:30 \\
+		incomplete date and time & YYYY-MM-DDThh:mm & 1985-04-22T12:16 \\
+		complete duration & PYYYY-MM-DDThh:mm:ss & P0002-10-15T10:30:20 \\
+		complete duration\tnote{6} & Pn\underline{n}Yn\underline{n}Mn\underline{n}DTn\underline{n}Hn\underline{n}Mn\underline{n}S & P0002-10-15T10:30:20\tnote{7} \\		
+		\hline
+	\end{tabular}
+	\begin{tablenotes}
+		\item[1] in extended format, it has - as separators for parts of dates \par and : as separators for parts of clock times,
+		\item[2] D can be 1 for Monday up to 7 for Sunday,
+		\item[3] ww represents number of calendar week within a year,
+		\item[4] HH can be 24 only to represent end of a calendar day,
+		\item[5] T character is used to indicate start of representation of time component,
+		\item[6] format with designators, underlined n means zero or more digits.
+		\item[7] a period/duration of 2 years, 10 months, 15 days, 10 hours, 30 minutes	and 20 seconds.
+	\end{tablenotes}
+	\end{threeparttable}
+	\caption{Some sample date and time representations in ISO8601 standard.}
+	\label{table:1a}
+\end{table}
+
+Now we explain the TimeML Specification Language with some examples. 
+
+\textbf{TimeML}\\ 
+TimeML is a modeling language specification which makes it easier to represent temporal expressions, temporal events and relationships between them \cite{DBLP:journals/lre/PustejovskyKLS05}. TimeML uses custom XML tags to capture temporal information. The four primary kinds of temporal tags as defined by TimeML are TIMEX3, EVENT, SIGNAL and LINK \cite{DBLP:conf/ndqa/PustejovskyCISGSKR03, pustejovsky2002annotation, ingria2002timeml}. The TIMEX3 tag captures the temporal expressions such as times, dates and durations. The EVENT tag is used to capture temporal events in text. The SIGNAL tag is used to capture temporal function words; for instance, ``before". Finally, the LINK tag is used to capture link between the aforementioned tags. 
+
+The TIMEX3 tag is modeled on the original TIMEX tag by Setzer in \cite{DBLP:phd/ethos/Setzer01} and also on the TIDES TIMEX2 tag by Ferro et al. in \cite{ferro2001tides, ferro2005tides}. We illustrate the tasks of temporal expression extraction and temporal expression normalization using the following example:
+
+\begin{mdframed}[style=MyFrame]
+	\sloppy
+	The \ul{1998} FIFA World Cup final was held on \ul{12 July 1998} at the Stade de France, Saint-Denis.
+\end{mdframed}
+
+The two temporal expressions in this example, underlined, need to be successfully extracted and normalized by the complete task of temporal tagging.  
+
+The task of temporal expression extraction will just enclose the temporal expressions found in any annotation scheme, we use TimeML TIMEX3 tags in this example, as shown below:
+
+\begin{mdframed}[style=MyFrame]
+	\sloppy
+	The <TIMEX3>\ul{1998}</TIMEX3> FIFA World Cup final was held on <TIMEX3>\ul{12 July 1998}</TIMEX3> at the Stade de France, Saint-Denis.
+\end{mdframed}
+
+%\begin{lstlisting}
+%The <TIMEX3>1998</TIMEX3> FIFA World Cup final was held on <TIMEX3>12 July 1998</TIMEX3> at the Stade de France, Saint-Denis.
+%\end{lstlisting}
+
+The task of temporal expression normalization will normalize the found temporal expressions to ISO dates format, using additional attributes of TIMEX3 tags in this example, as shown below:
+
+\begin{mdframed}[style=MyFrame]
+	\sloppy
+	The <TIMEX3 tid=``t1" type=``DATE" value=``1998">\ul{1998}</TIMEX3> FIFA World Cup final was held on <TIMEX3 tid=``t4" type=``DATE" value=``1998-07-12">\ul{12 July 1998}</TIMEX3> at the Stade de France, Saint-Denis.
+\end{mdframed}
+
+In the above example, we see some of the attributes of TIMEX3 tags that aid in normalization, i.e., tid, type and value; tid is a unique id assigned to every TIMEX3 tag, type can be one of the following: TIME, DATE, DURATION or SET, value represents the normalized value of the temporal expression in ISO 8601 format. Each type captures a kind of temporal expression:
+
+\begin{enumerate}[i.] \label{ss2as:timeml}
+	\item Time temporal expressions are such that point to a time such that its granularity is less than that of a day. For instance, `The guests arrived at \ul{9 am}'.
+	\item Date temporal expressions are such that point to a time such that its granularity is larger or equal to that of a day. For instance, `It was really cold in \ul{Fall 2003}'. 
+	\item Duration temporal expressions are such that point to some length of time. For instance, `The family stayed for \ul{2 months}'.
+	\item Set temporal expressions are such that point to some times which occur again and again. For instance, `He visited his family \ul{weekly}'.
+\end{enumerate}
+For more examples of TIMEX3 tags in use, see \cite{sauri2006timeml, timeml2009guidelines}.\\
+
+
+
+\section{Temporal Taggers}
+Temporal taggers are computer programs made for the purpose of automatic temporal tagging of documents, including both extraction and normalization of the temporal expressions in documents. As mentioned earlier, temporal tagging is a two step process, i.e., extraction and normalization. Therefore, the taggers need to perform both these tasks for the complete task of temporal tagging. Discussing two steps of temporal tagging is important here because in most taggers they are done separately with differing techniques. However, there are some tools available which only perform normalization; for example, TIMEN by Llorens et al. in \cite{DBLP:conf/lrec/LlorensDGS12}.
+
+
+
+
+\subsection{Different Approaches for Tagging}
+For the first task of temporal tagging, i.e., extraction, both rule-based and supervised machine-learning approaches are used. The rule-based approach makes use of regular expressions, pattern lists, part-of-speech information, among others \cite{DBLP:phd/de/Strotgen15}. The machine learning approaches used are supervised and need annotated corpora to learn patterns. 
+
+For the second task of temporal tagging, i.e., normalization, rule-based approaches are used by almost all the taggers \cite{DBLP:phd/de/Strotgen15}, because of complex nature of the task. It is complex because it is difficult to normalize relative and under-specified expressions, especially in documents where document creation time is not available. 
+
+The advantage of rule-based approaches is that the rules can be created without requiring temporally annotated corpora; thus, easy to extend to many languages. The disadvantage of rule-based approaches is that it requires manual effort, language experts and is time consuming to create the rules. On the other hand, machine learning approaches have the advantage of not requiring manual effort or language experts; but the disadvantage is that they require temporally annotated corpora. 
+
+In the following table, we summarize some of the temporal taggers and approaches they use:
+
+\begin{table}[H] \label{the-ttaggers-table1}
+	\centering
+	\rowcolors{1}{}{cream}
+	\begin{threeparttable}
+		\begin{tabular}{||l l l l||} 
+			\hline
+			\textbf{Temporal Tagger} & \textbf{Extraction} & \textbf{Normalization} & \textbf{Annotation} \\ [0.5ex] 
+			\hline\hline
+			TempEx \cite{DBLP:conf/acl/ManiW00} & rule-based & rule-based & TIMEX2 \\ 
+			GUTime \cite{DBLP:conf/acl/VerhagenMSLKJRPP05} & rule-based & rule-based & TimeML \\
+			Chronos \cite{negri2004recognition} & rule-based & rule-based & TIMEX2 \\
+			TERSEO \cite{DBLP:journals/dke/SaqueteMM06} & rule-based & rule-based & TIMEX2 \\
+			ATEL \cite{DBLP:conf/cicling/HaciogluCD05} & ML-based & - & TIMEX2 \\
+			DANTE \cite{DBLP:conf/ltconf/MazurD07} & rule-based & rule-based & TIMEX2  \\
+			TimexTag \cite{DBLP:conf/dagstuhl/AhnAR05, DBLP:conf/naacl/AhnRR07} & rule-based & rule-based & TIMEX2  \\
+			TEA \cite{DBLP:conf/time/HanGL06} & rule-based & rule-based & TimeML  \\
+			TIPSem \cite{DBLP:conf/semeval/LlorensSN10} & ML-based & rule-based & TimeML \\
+			TIMEN \cite{DBLP:conf/lrec/LlorensDGS12}  & - & rule-based & TimeML  \\
+			TRIPS/TRIOS \cite{DBLP:conf/semeval/UzZamanA10} & ML-based & rule-based & TimeML  \\
+			SUTime \cite{DBLP:conf/lrec/ChangM12} & rule-based & rule-based & TimeML  \\
+			UWTime \cite{DBLP:conf/acl/LeeADZ14} & hybrid\tnote{1} & hybrid\tnote{1} & TimeML \\
+			HeidelTime \cite{DBLP:conf/semeval/StrotgenG10} & rule-based & rule-based & TimeML  \\ [1ex]
+			\hline
+		\end{tabular}
+	\begin{tablenotes}
+		\item[1] hybrid means it uses both rules and ML-techniques.
+	\end{tablenotes}
+	\end{threeparttable}
+	\caption{Some of the temporal taggers and approaches they use.}
+	\label{table:1b}
+\end{table}
+
+
+
+\subsection{Temporal Taggers for Non-English Corpora}
+To invigorate the research in the area of temporal tagging, competitions such as ACE TERN and TempEval have been held in past years. With each subsequent version of these competitions, more languages were added in the competitions and researchers took part in these with temporal taggers for different languages. 
+
+To process non-English languages, taggers can be classified into two types, i.e., specialized taggers or extensible taggers. The specialized taggers are made for a specific language from the get-go, while the extensible taggers are made with future extensibility to further languages in mind. One may further classify the latter type of taggers into two sub-types based on the amount of effort and knowledge about the tagger required to extend it to a new language \cite{DBLP:phd/de/Strotgen15}. 
+
+An  example of a specialized tagger is TETI \cite{DBLP:conf/imcsit/CasellidP09} which tags Italian documents. An example of extensible tagger is Chronos \cite{negri2004recognition} which was developed for English originally and later extended to support Italian.
+
+In the following table, we summarize some of the temporal taggers that can tag non-English corpora:  
+
+\begin{table}[H] \label{the-ttaggers-table2}
+	\centering
+	\rowcolors{1}{}{cream}
+	\begin{threeparttable}
+		\begin{tabular}{||l l l||} 
+			\hline
+			\textbf{Temporal Tagger} & \textbf{Type} & \textbf{Language(s)} \\ [0.5ex] 
+			\hline\hline
+			Chronos \cite{negri2004recognition, negri2007dealing} & extensible & 2 (English, Italian)  \\
+			TETI \cite{DBLP:conf/imcsit/CasellidP09} & specialized & 1 (Italian) \\
+			TERSEO \cite{DBLP:journals/dke/SaqueteMM06, negri2006evaluating} & extensible & 3 (Spanish, English, Italian)  \\
+			TIPSem \cite{DBLP:conf/semeval/LlorensSN10} & extensible & 4 (English, Spanish, Italian, Chinese)  \\
+			HeidelTime \cite{DBLP:conf/semeval/StrotgenG10, DBLP:conf/emnlp/StrotgenG15} & extensible & 13 (and 200+)\tnote{1}   \\ [1ex]
+			\hline
+		\end{tabular}
+		\begin{tablenotes}
+			\item[1] HeidelTime has hand-crafted resources for 13 languages including English, German, Arabic, etc. also automatically developed resources for over 200 languages.
+		\end{tablenotes}
+	\end{threeparttable}
+	\caption{Some temporal taggers that can tag non-English corpora.}
+	\label{table:1c}
+\end{table}
+
+
+
+\subsection{Temporally Annotated Corpora} \label{tactac}
+To compare the performance of different temporal taggers, researchers have made available some temporally annotated corpora, using either TIDES TIMEX2 or TimeML annotation scheme. Many of these corpora are for English language, such as ACE TERN 2004 Training, TimeBank v1.2 and TempEval-2. In recent years, corpora for other languages have also been made available, such as Arabic corpus of ACE 2005 Training, French TimeBank and Romanian TimeBank.
+
+In the following table, we summarize some of the temporally annotated corpora available.
+  
+\begin{table}[H] \label{the-ttaggers-corpora-table}
+	\centering
+	\rowcolors{1}{}{cream}
+	\begin{threeparttable}
+		\begin{tabularx}{\linewidth}{||l   >{\raggedright\arraybackslash}X   >{\raggedright\arraybackslash}p{0.6in}   >{\raggedright\arraybackslash}p{1in}||} 
+			\hline
+			\textbf{Corpus} & \textbf{Language(s)} & \textbf{Scheme} & \textbf{Domain} \\ [0.5ex] 
+			\hline\hline
+			ACE 2005 \cite{walker2006ace} & Arabic, Chinese, English & TIMEX2 & news, blogs and discussion \\
+%			ACE 2007 & Arabic, Spanish & TIMEX2 & news and blogs \\
+			\hline
+			TempEval-2 \cite{DBLP:conf/semeval/VerhagenSCP10} & Chinese, English, French, Italian, Korean, Spanish & TimeML & news \\
+			TempEval-3 \cite{DBLP:conf/semeval/UzZamanLDAVP13} & English, Spanish & TimeML & news \\
+			\hline
+			AncientTimes \cite{DBLP:conf/lrec/StrotgenBZACG14}& Arabic, Dutch, English, French, German, Italian, Spanish, Vietnamese & TimeML & narratives \\
+			\hline
+			WikiWarsDE \cite{strotgen2011wikiwarsde} & German & TIMEX2 & narratives \\
+			WikiWarsVN \cite{strotgen2014time} & Vietnamese & TimeML & narratives \\
+			WikiWarsHR \cite{skukan2014heideltime} & Croatian & TimeML & narratives \\
+			\hline
+			FR-TimeBank \cite{bittar2011french} & French & TimeML & news \\
+			PT-TimeBank \cite{Costa:Branco:2012c}  & Portuguese & TimeML & news \\
+			RO-TimeBank \cite{foruascu2012romanian} & Romanian & TimeML & news \\
+			Ita-TimeBank \cite{caselli2011annotating} & Italian & TimeML & news \\
+%			\hline
+%			TIDES Parallel  & Spanish & TIMEX2 & dialogs \\ [1ex]
+			\hline
+		\end{tabularx}
+		%\begin{tablenotes}
+		%	\item[1] a footnote text placeholder ... 
+		%\end{tablenotes}
+	\end{threeparttable}
+	\caption{Some multilingual temporally annotated corpora available.}
+	\label{table:1d}
+\end{table}
+
+\subsection{Automated Approaches to Tackle Multilinguality}
+Temporal taggers are generally made for a certain language, and temporal taggers that are rule based can be usually extended to support further languages \cite{DBLP:series/synthesis/2016Strotgen}. The task of extending a temporal tagger to support new language by adding new rules is a laborious one and requires respective language expert(s). Also, if the rules are not separated out from the general tagging system itself, the task of extending it to support another language will become more complex; as now one need to understand the working of system itself to add new rules. To add support of a new language to a temporal tagger some early semiautomatic approaches have been suggested. Some such approaches are discussed below.
+
+Saquete et al. in \cite{DBLP:conf/micai/SaqueteMM04} present a semiautomatic extension of TERSO, a monolingual temporal tagger for Spanish. They present a five stage approach. The first step is a translation unit that translates Spanish temporal expressions from the TERSEO knowledge base into the target languages. The second step is debugger unit that uses Google to remove spurious translations of the first step. The third step is a keyword unit that uses Wordnet (as the target language is English) to get synonyms for the expressions it receives from the second stage. The fourth step gets even further expressions by running the tagger on a corpus of target language. The fifth step assigns a resolution to each temporal expression and they are added to the TERSEO knowledge base. Finally, integration of the extension system with TERSEO is done. The autors evaluated the first two units of the mentioned pipeline. No evaluation was performed to evalaute the annotation performance on an English corpora directly, though. 
+
+TERSEO was further automatically ported to support Italian in by Negri et al. in \cite{negri2006evaluating}. The authors presented three evaluation strategies, i.e., first by using online translators, second by using knowledge from annotated corpora and third by using combined approach. The results were encouraging as a baseline, but ofcourse not close to state-of-the-art systems for Italian. 
+
+Most automatically porting approaches till recenty, were limited to a small number of languages, results for normalization were not so good and only corpora of news domain were evaluated \cite{DBLP:series/synthesis/2016Strotgen}. However, Str{\"{o}}tgen and Gertz in \cite{DBLP:conf/emnlp/StrotgenG15} added support for over 200 languages in HeidelTime using the resources that were automatically developed, had good baseline scores for normalization in addition to extraction and tagged documents in domains other than news too. As the main goal of this thesis is to make automatically developed resources of HeidelTime further better, HeidelTime and its model for creating automatically developed resources will be explained in detail in Chapter \ref{the-chapter-3}.
+
+\section{Linguistic Background}
+To do linguistic analysis of any natural language, the characters, words, and sentences in any document need to be clearly defined; and defining these units present different challenges based on the language being processed; the task is not trivial considering the wide range of human languages and writing systems \cite{indurkhya2010handbook}.
+
+Linguistic properties of a language should be kept in mind when designing any NLP system for respective language. Some of linguistic properties of various natural languages are discussed in this section. 
+
+\subsection{Morphologically-rich Languages} \label{morphologically-rich-languages-background}
+Morpheme is a smallest meaningful unit of a language. Morphology is the study of the structure words in a language and their relation to other words, while syntax is the study of the structure of sentences in a language. In morphologically-rich languages, the role of morphology is much greater, and correspondingly the role of syntax smaller; for instance, Turkish \cite{dressler2003morphological}. 
+
+\subsection{Inflections}
+Inflection is a phenomenon that changes the morphology of words in a language. Another such phenomenon is called derivation. An affix can be either inflectional or derivational. 
+
+One characteristic, among others, that distinguishes inflectional morphemes from derivational morphemes is that inflectional morphemes typically occur with all members of some large class of morphemes; for instance, the plural morpheme -s in English occurs with almost all countable nouns; while derivational morphemes tpyically occur with some members of some large class of morphemes; for instance, the morpheme -hood in Enlgish can occur with only few words such as knight (see link\footnote{\url{http://www-personal.umich.edu/~jlawler/Inflection.pdf}}).  
+
+The inflectional morphology for English is relatively simpler, while the inflectional morphological possibilities for some other languages are more numerous \cite{indurkhya2010handbook}. The languages that have large number of inflections are called synthetic languages. Another aspect worth mentioning is that agglutination and fusion are forms of inflection, among others. 
+
+The difference between agglutination and inflection is summarised in table below:
+
+
+\begin{table}[H] \label{the-inflection-table}
+	\centering
+	\rowcolors{1}{}{cream}
+	\begin{threeparttable}
+		\begin{tabularx}{\linewidth}{||>{\raggedright\arraybackslash}p{.8in}| >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X||} 
+			\hline
+			\textbf{} &
+			\textbf{Agglutinative inflection} & \textbf{Fusional inflection} \\ [0.5ex] 
+			\hline\hline
+			\textbf{Definition} & inflection refers to one category & inflection can refer to many categories \\
+			\textbf{Example language} & Turkish  & Latin \\
+			\textbf{Example inflection}  & `-iz' in Turkish refers a plural subject & `-tis' in Latin\tnote{1} can refer to second person plural subject of verb in present tense, active voice \\ [1ex]
+			\hline
+		\end{tabularx}
+		\begin{tablenotes}
+			\item[1] \url{https://linguistics.stackexchange.com/a/9384} 
+		\end{tablenotes}
+	\end{threeparttable}
+	\caption{Inflection types.}
+	\label{table:1e}
+\end{table}
+
+As noted earlier, some languages have numerous possibilites for inflectional morphology. For instance, the plural form in German is denoted by various endings such as `-en', `-er', `-e' or `-n'; moreover, the suffixes `-en' or `-n' are also used to represent cases \cite{indurkhya2010handbook}. Grammar of some languages such as Finnish have even greater number of cases than German does; thus, leading to a lot of inflections. 
+
+The following table depicts inflections for the Finnish word `Tammikuu', that is the month name `January' in Finnish. 
+
+\begin{table}[H] \label{the-inflection-table-tammikuu}
+	\centering
+	\rowcolors{1}{}{cream}
+	\begin{threeparttable}
+		\begin{tabularx}{\linewidth}{||>{\raggedright\arraybackslash}p{1.5in}| >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X||} 
+			\hline
+			\multicolumn{3}{|l|}{\textbf{Inflection of tammikuu\tnote{1}} } \\
+			\hline\hline
+			\textbf{} & \textbf{singular} & \textbf{plural} \\
+			\textbf{nominative} & tammikuu  & tammikuut \\
+			\textbf{accusative nom.} & tammikuu  & tammikuut \\
+			\textbf{accusative gen.} & tammikuun  & tammikuut \\
+			\textbf{genitive} & tammikuun  & tammikuiden, tammikuiden \\
+			\textbf{partitive} & tammikuuta  & tammikuita \\
+			\textbf{inessive} & tammikuussa  & tammikuissa \\
+			\textbf{elative} & tammikuusta  & tammikuista \\
+			\textbf{illative} & tammikuuhun  & tammikuihin \\
+			\textbf{adessive} & tammikuulla  & tammikuilla \\
+			\textbf{ablative} & tammikuulta  & tammikuilta \\
+			\textbf{allative} & tammikuulle  & tammikuille \\
+			\textbf{essive} & tammikuuna  & tammikuina \\
+			\textbf{translative} & tammikuuksi  & tammikuiksi \\
+			\textbf{instructive} & - & tammikuin \\
+			\textbf{abessive} & tammikuutta  & tammikuitta \\
+			\textbf{comitative} & -  & tammikuineen \\ [1ex]
+			\hline
+		\end{tabularx}
+		\begin{tablenotes}
+			\item[1] \url{https://en.wiktionary.org/wiki/tammikuu#Finnish}
+		\end{tablenotes}
+	\end{threeparttable}
+	\caption{Inflections of the Finnish word Tammikuu (January).}
+	\label{table:1f}
+\end{table}
+
+%\begin{figure}[H]
+%	\centering
+%	\includegraphics[width=12cm]{january-finnish}
+%	\caption{Finnish translation for `January' depicting inflections in language}
+%	\label{figure:2a}
+%\end{figure}
+
+\subsection{Unsegmented Languages}
+Languages such as Chinese, Japanese and Thai are fundamentally different than space-delimited languages, in that they lack any spaces between words \cite{indurkhya2010handbook}. The words are not separated using spaces in these languages, and there are no clear indication of word boundaries. 

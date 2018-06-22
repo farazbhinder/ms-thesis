@@ -1,0 +1,13 @@
+ggplotting thesis
+
+polish <- matrix(c(86618, 141274, 9049, 103, 474731, 106090, 23153, 633, 155311, 141779, 3036, 187, 761104, 10317, 23153, 633), ncol=4)
+polish <- t(polish)
+colnames(polish) <- c("Date", "Duration", "Time", "Set")
+rownames(polish) <- c("2.2.1", "2.x", "2.x-wv", "2.x-afr")
+
+tpolish <- t(polish)
+dfpolish <- as.data.frame(tpolish)
+
+mpolish <- melt(tpolish)
+colnames(mpolish) <- c("Type", "Version", "Count")
+ggplot(data = mpolish, aes(x=Type, y = Count, group=Version, color=Version)) + geom_line(size=1) + geom_point(size=3, shape=16, fill="white")
